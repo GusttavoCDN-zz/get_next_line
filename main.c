@@ -120,20 +120,14 @@ int main(void)
 {
 	int fd;
 	char *line;
-	// int i = 1;
+	int i = 1;
 	fd = open("./test.txt", O_RDONLY);
-	line = get_next_line(fd);
 
-	printf("line >>> %s\n", line);
-	line = get_next_line(fd);
-
-	printf("line >>> %s\n", line);
-
-	// while ((line = get_next_line(fd)) != NULL)
-	// {
-	// 	printf("Line %i >>> %s", i++, line);
-	// 	free(line);
-	// }
+	 while ((line = get_next_line(fd)) != NULL)
+	 {
+	 	printf("Line %i >>> %s", i++, line);
+	 	free(line);
+	 }
 
 	close(fd);
 	return (0);
@@ -160,14 +154,20 @@ static	void	read_and_store(int fd, char **accumulator, char *buffer)
 {
 	int readed_bytes;
 
-	readed_bytes = 1;
-	while (readed_bytes > 0 && ft_find_nl(buffer) == 0)
+	readed_bytes = read(fd, buffer, BUFFER_SIZE);
+	if (readed_bytes > 0)
 	{
 		if (*accumulator == NULL)
 			*accumulator = ft_strdup("");
-		readed_bytes = read(fd, buffer, BUFFER_SIZE);
 		buffer[readed_bytes] = '\0';
 		update_acummulator(accumulator, ft_strjoin(*accumulator, buffer));
+		while (readed_bytes > 0 && ft_find_nl(buffer) == 0)
+		{
+
+			readed_bytes = read(fd, buffer, BUFFER_SIZE);
+			buffer[readed_bytes] = '\0';
+			update_acummulator(accumulator, ft_strjoin(*accumulator, buffer));
+		}
 	}
 }
 
@@ -176,9 +176,13 @@ static	char* create_line(char **accumulator)
 	char *new_line;
 	int line_len;
 
+	if (*accumulator == NULL)
+		return (NULL);
 	line_len = ft_find_nl(*accumulator) + 1;
 	new_line = ft_substr(*accumulator, 0, line_len);
 	update_acummulator(accumulator, ft_substr(*accumulator, line_len, ft_strlen(*accumulator)));
+	if (*accumulator[0] == '\0')
+		update_acummulator(accumulator, NULL);
 	return (new_line);
 }
 
