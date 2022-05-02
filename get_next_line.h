@@ -6,10 +6,9 @@
 /*   By: guda-sil <guda-sil@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/25 10:54:19 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/02 23:35:28 by guda-sil         ###   ########.fr       */
+/*   Updated: 2022/05/03 00:27:51 by guda-sil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
@@ -23,7 +22,7 @@
  * @return The line read. NULL if there is nothing
  * else to read, or an error occured.
  */
-char	*get_next_line(int	fd);
+char	*get_next_line(int fd);
 char	*ft_strdup(const char *s);
 size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char const *s1, char const *s2);
