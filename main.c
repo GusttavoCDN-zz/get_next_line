@@ -7,192 +7,18 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-#define BUFFER_SIZE 40
+#define BUFFER_SIZE 20
 
-int main(void)
+static	void	read_and_store(int fd, char **accumulator, char *buffer);
+static	void	update_acummulator(char **acumulator, char *buffer);
+static	char* create_line(char **accumulator);
+
+char	*ft_strdup(const char *s)
 {
-	int fd;
-	char *line;
-	int i = 1;
-	fd = open("./naruto_speech.txt", O_RDONLY);
+	size_t	i;
+	char	*string;
 
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("Line %i >>> %s", i++, line);
-		free(line);
-	}
-
-	close(fd);
-	return (0);
-}
-
-char *get_next_line(int fd)
-{
-	static t_list *storage = NULL;
-	char *line;
-
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	line = NULL;
-	read_and_store(&storage, fd);
-	line = create_line(line, &storage);
-	if (line[0] == '\0')
-	{
-		clean_storage(&storage);
-		storage = NULL;
-		free(line);
-		return (NULL);
-	}
-	clean_storage(&storage);
-	return (line);
-}
-
-void clean_storage(t_list **storage)
-{
-	t_list *last_node;
-	t_list *new_storage;
-	int j;
-	int i;
-
-	i = 0;
-	last_node = ft_lst_get_last(*storage);
-	while (last_node->content[i] && last_node->content[i] != '\n')
-		i++;
-	if (last_node->content[i] && last_node->content[i] == '\n')
-		i++;
-	new_storage = ft_lstnew(ft_strdup(&last_node->content[i]));
-	ft_lstclear(storage);
-	*storage = new_storage;
-}
-
-char *create_line(char *line, t_list **storage)
-{
-	int length;
-	t_list *current_node;
-	int i;
-	int j;
-
-	j = 0;
-	current_node = *storage;
-	length = get_line_length(storage);
-	line = malloc((length + 1) * sizeof(char));
-	if (!line)
-		return (NULL);
-	while (current_node)
-	{
-		i = 0;
-		while (current_node->content[i] && current_node->content[i] != '\n')
-			line[j++] = current_node->content[i++];
-		current_node = current_node->next;
-	}
-	if (length > 0)
-		line[j++] = '\n';
-	line[j] = '\0';
-	return (line);
-}
-
-int get_line_length(t_list **storage)
-{
-	t_list *current_node;
-	int i;
-	int length;
-
-	length = 0;
-	current_node = *storage;
-	while (current_node)
-	{
-		i = 0;
-		while (current_node->content[i])
-		{
-			if (current_node->content[i] == '\n')
-			{
-				length++;
-				return (length);
-			}
-			i++;
-			length++;
-		}
-		current_node = current_node->next;
-	}
-
-	return (length);
-}
-
-void read_and_store(t_list **storage, int fd)
-{
-	int chars_readed;
-	char *buffer;
-
-	chars_readed = BUFFER_SIZE;
-	while (chars_readed == BUFFER_SIZE && !has_nl((*storage)))
-	{
-		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-		if (buffer == NULL)
-			return;
-		chars_readed = read(fd, buffer, BUFFER_SIZE);
-		buffer[chars_readed] = '\0';
-		add_content_to_storage(buffer, storage);
-		free(buffer);
-	}
-}
-
-void add_content_to_storage(char *buffer, t_list **storage)
-{
-	t_list *new_node;
-	t_list *current_node;
-
-	new_node = ft_lstnew(ft_strdup(buffer));
-	ft_lstadd_back(storage, new_node);
-}
-
-int has_nl(t_list *storage)
-{
-	int i;
-	t_list *current_node;
-
-	if (storage == NULL)
-		return (0);
-	current_node = ft_lst_get_last(storage);
-	i = 0;
-	while (current_node->content[i])
-	{
-		if (current_node->content[i] == '\n')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-t_list *ft_lst_get_last(t_list *storage)
-{
-	t_list *node;
-
-	node = storage;
-	if (!node)
-		return (NULL);
-	while (node->next != NULL)
-		node = node->next;
-	return (node);
-}
-
-t_list *ft_lstnew(void *content)
-{
-	t_list *new_node;
-
-	new_node = (t_list *)malloc(sizeof(t_list));
-	if (!new_node)
-		return (NULL);
-	new_node->content = content;
-	new_node->next = NULL;
-	return (new_node);
-}
-
-char *ft_strdup(const char *s)
-{
-	size_t i;
-	char *string;
-
-	string = (char *)malloc(strlen(s) + sizeof(char));
+	string = (char *)malloc(ft_strlen(s) + sizeof(char));
 	if (!string)
 		return (NULL);
 	i = 0;
@@ -204,36 +30,162 @@ char *ft_strdup(const char *s)
 	string[i] = '\0';
 	return (string);
 }
-
-void ft_lstadd_back(t_list **lst, t_list *new)
+size_t	ft_strlen(const char *s)
 {
-	t_list *node;
+	size_t	length;
 
-	if ((*lst) == NULL)
-		(*lst) = new;
-	else
+	length = 0;
+	while (s[length] != '\0')
+		length++;
+	return (length);
+}
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	size_t	str_len;
+	char	*str;
+
+	if (!s1 || !s2)
+		return (NULL);
+	str_len = ft_strlen(s1) + ft_strlen(s2) + 1;
+	str = malloc(str_len * sizeof(char));
+	if (!str)
+		return (NULL);
+	ft_strlcat(str, s1, ft_strlen(s1) + 1);
+	ft_strlcat(str, s2, str_len);
+	return (str);
+}
+
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
+{
+	size_t	i;
+	size_t	j;
+	size_t	f_len;
+
+	f_len = ft_strlen(dst) + ft_strlen(src);
+	i = ft_strlen(dst);
+	j = 0;
+	if (size > i)
 	{
-		node = *lst;
-		while (node->next != NULL)
-			node = node->next;
-		node->next = new;
+		while (src[j] && i < size - 1)
+			dst[i++] = src[j++];
+		dst[i] = '\0';
+		return (f_len);
+	}
+	return (ft_strlen(src) + size);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	size_t	s_len;
+	size_t	substr_len;
+	char	*substr;
+
+	if (!s)
+		return (NULL);
+	s_len = ft_strlen(s);
+	substr_len = s_len - (size_t) start;
+	if (start > s_len)
+		return ((char *) malloc(1 * sizeof(char)));
+	if (substr_len > len)
+		substr = (char *) malloc((len + 1) * sizeof(char));
+	else
+		substr = (char *) malloc((substr_len + 1) * sizeof(char));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (s[start] && len--)
+		substr[i++] = s[start++];
+	substr[i] = '\0';
+	return (substr);
+}
+
+
+static int	ft_find_nl(const char *str)
+{
+	int	size;
+
+	size = 0;
+	while (str[size])
+	{
+		if ((unsigned char) str[size] == '\n')
+			return (size);
+		size++;
+	}
+	return (0);
+}
+
+
+int main(void)
+{
+	int fd;
+	char *line;
+	// int i = 1;
+	fd = open("./test.txt", O_RDONLY);
+	line = get_next_line(fd);
+
+	printf("line >>> %s\n", line);
+	line = get_next_line(fd);
+
+	printf("line >>> %s\n", line);
+
+	// while ((line = get_next_line(fd)) != NULL)
+	// {
+	// 	printf("Line %i >>> %s", i++, line);
+	// 	free(line);
+	// }
+
+	close(fd);
+	return (0);
+}
+
+char *get_next_line(int fd)
+{
+	static char *accumulator = NULL;
+	char *buffer;
+	char *line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buffer = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (buffer == NULL)
+		return (NULL);
+	read_and_store(fd, &accumulator, buffer);
+	line = create_line(&accumulator);
+	free(buffer);
+	return (line);
+}
+
+static	void	read_and_store(int fd, char **accumulator, char *buffer)
+{
+	int readed_bytes;
+
+	readed_bytes = 1;
+	while (readed_bytes > 0 && ft_find_nl(buffer) == 0)
+	{
+		if (*accumulator == NULL)
+			*accumulator = ft_strdup("");
+		readed_bytes = read(fd, buffer, BUFFER_SIZE);
+		buffer[readed_bytes] = '\0';
+		update_acummulator(accumulator, ft_strjoin(*accumulator, buffer));
 	}
 }
 
-void ft_lstclear(t_list **lst)
+static	char* create_line(char **accumulator)
 {
-	t_list *node;
-	t_list *next_node;
+	char *new_line;
+	int line_len;
 
-	if (!(*lst))
-		return;
-	node = (*lst);
-	while (node != NULL)
-	{
-		next_node = node->next;
-		free(node->content);
-		free(node);
-		node = next_node;
-	}
-	*lst = NULL;
+	line_len = ft_find_nl(*accumulator) + 1;
+	new_line = ft_substr(*accumulator, 0, line_len);
+	update_acummulator(accumulator, ft_substr(*accumulator, line_len, ft_strlen(*accumulator)));
+	return (new_line);
+}
+
+static	void	update_acummulator(char **accumulator, char *new_buffer)
+{
+	char *temp;
+	temp = *accumulator;
+	*accumulator = new_buffer;
+	free(temp);
 }
