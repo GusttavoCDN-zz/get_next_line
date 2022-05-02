@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guda-sil@student.42sp.org.br <guda-sil@    +#+  +:+       +#+        */
+/*   By: guda-sil <guda-sil@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/25 10:54:19 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/02 13:03:55 by guda-sil@st      ###   ########.fr       */
+/*   Updated: 2022/05/02 23:35:28 by guda-sil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_strchr(const char *str, int c);
 
 #endif
