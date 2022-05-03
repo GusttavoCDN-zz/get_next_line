@@ -2,7 +2,7 @@ NAME = get_next_line.a
 
 SRCS = get_next_line.c get_next_line_utils.c
 
-HEADER = .
+HEADER = get_next_line.h
 
 RM = rm -f
 
@@ -14,11 +14,11 @@ CC = cc
 
 all: ${NAME}
 
-${NAME}: ${OBJS}
-	ar -rcs ${NAME} ${OBJS}
+${NAME}: ${OBJS} ${HEADER}
+	ar -rcs ${NAME} ${OBJS} ${HEADER}
 
 %.o: %.c
-	$(CC) $(CFLAGS) -I $(HEADER) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
 	$(RM) ${OBJS}
