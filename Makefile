@@ -8,9 +8,11 @@ RM = rm -f
 
 OBJS = ${SRCS:.c=.o}
 
-FLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=42
+FLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=1
 
 CC = cc
+
+MAIN = main.c
 
 all: ${NAME}
 
@@ -25,6 +27,10 @@ clean:
 
 fclean: clean
 	$(RM) ${NAME}
+
+test: ${NAME} ${MAIN}
+	$(CC) ${MAIN} ${NAME} -o test
+	./test
 
 re: fclean all
 
