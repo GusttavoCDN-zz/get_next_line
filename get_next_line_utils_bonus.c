@@ -6,7 +6,7 @@
 /*   By: guda-sil@student.42sp.org.br <guda-sil@    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:02:32 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/04 15:32:14 by guda-sil@st      ###   ########.fr       */
+/*   Updated: 2022/05/04 20:59:59 by guda-sil@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,19 +103,4 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		substr[i++] = s[start++];
 	substr[i] = '\0';
 	return (substr);
-}
-
-void	ft_lstadd_back(t_list **lst, t_list *new)
-{
-	t_list	*node;
-
-	if ((*lst) == NULL)
-		(*lst) = new;
-	else
-	{
-		node = *lst;
-		while (node->next != NULL)
-			node = node->next;
-		node->next = new;
-	}
 }

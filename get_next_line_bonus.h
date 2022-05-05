@@ -6,7 +6,7 @@
 /*   By: guda-sil@student.42sp.org.br <guda-sil@    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:02:29 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/04 15:30:36 by guda-sil@st      ###   ########.fr       */
+/*   Updated: 2022/05/04 21:03:16 by guda-sil@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 
 typedef struct s_list
 {
-	char	*content;
-	struct	s_list	*next;
+	char			*content;
+	struct s_list	*next;
 }	t_list;
 
 /**
@@ -35,6 +35,5 @@ size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strchr(const char *str, int c);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-void	ft_lstadd_back(t_list **lst, t_list *new);
 
 #endif
