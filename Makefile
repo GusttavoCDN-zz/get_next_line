@@ -28,10 +28,6 @@ clean:
 fclean: clean
 	$(RM) ${NAME}
 
-test: ${NAME} ${MAIN}
-	$(CC) ${MAIN} ${NAME} -o test
-	./test
-
 re: fclean all
 
 .PHONY: clean all fclean re

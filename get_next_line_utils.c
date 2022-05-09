@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guda-sil <guda-sil@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: guda-sil@student.42sp.org.br <guda-sil@    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/25 10:54:35 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/03 00:15:43 by guda-sil         ###   ########.fr       */
+/*   Created: 2022/05/04 14:02:32 by guda-sil@st       #+#    #+#             */
+/*   Updated: 2022/05/09 11:27:32 by guda-sil@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char	*ft_strdup(const char *s)
+{
+	size_t	i;
+	char	*string;
+
+	string = (char *)malloc(ft_strlen(s) + sizeof(char));
+	if (!string)
+		return (NULL);
+	i = 0;
+	while (s[i] != '\0')
+	{
+		string[i] = s[i];
+		i++;
+	}
+	string[i] = '\0';
+	return (string);
+}
 
 size_t	ft_strlen(const char *s)
 {
@@ -20,22 +38,6 @@ size_t	ft_strlen(const char *s)
 	while (s[length] != '\0')
 		length++;
 	return (length);
-}
-
-char	*ft_strchr(const char *str, int c)
-{
-	char	*s;
-
-	s = (char *)str;
-	while (*s)
-	{
-		if ((unsigned char) *s == (unsigned char) c)
-			return (s);
-		s++;
-	}
-	if (!c && !(*s))
-		return (s);
-	return (NULL);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
@@ -61,22 +63,20 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (str);
 }
 
-char	*ft_strdup(const char *s)
+char	*ft_strchr(const char *str, int c)
 {
-	size_t	i;
-	char	*string;
+	char	*s;
 
-	string = (char *)malloc(ft_strlen(s) + sizeof(char));
-	if (!string)
-		return (NULL);
-	i = 0;
-	while (s[i] != '\0')
+	s = (char *)str;
+	while (*s)
 	{
-		string[i] = s[i];
-		i++;
+		if ((unsigned char) *s == (unsigned char) c)
+			return (s);
+		s++;
 	}
-	string[i] = '\0';
-	return (string);
+	if (!c && !(*s))
+		return (s);
+	return (NULL);
 }
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
