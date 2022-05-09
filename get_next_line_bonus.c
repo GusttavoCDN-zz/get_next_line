@@ -6,104 +6,87 @@
 /*   By: guda-sil@student.42sp.org.br <guda-sil@    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:02:24 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/04 21:58:02 by guda-sil@st      ###   ########.fr       */
+/*   Updated: 2022/05/09 10:41:17 by guda-sil@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-// static	void	ft_lstadd_back(t_list **lst, t_list *new);
-static	void	read_and_store(int fd, t_list **acc, char *buffer);
-static	char	*create_line(t_list **acc);
+static	void	read_and_store(int fd, char **accumulator, char *buffer);
+static	char	*create_line(char **accumulator);
+static	void	update_accumulator(char **accumulator, char *new_buffer);
 
-static	size_t	find_len(const char *string)
+static	size_t	find_nl(const char *str, int c)
 {
-	size_t	i;
+	size_t	size;
 
-	i = 0;
-	while (string[i] != '\0')
+	size = 0;
+	while (str[size])
 	{
-		if ((unsigned char)string[i] == (unsigned char) '\n')
-			return (i);
-		i++;
+		if ((unsigned char) str[size] == (unsigned char) c)
+			return (size);
+		size++;
 	}
-	return (0);
+	return (size);
 }
 
 char	*get_next_line(int fd)
 {
-	static t_list	*accumulator = NULL;
-	char			*buffer;
-	char			*line;
+	static char	*accumulator[1024];
+	char		*buffer;
+	char		*line;
 
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = calloc(BUFFER_SIZE + 1, 1);
+	buffer = (char *) malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (buffer == NULL)
 		return (NULL);
-	read_and_store(fd, &accumulator, buffer);
+	read_and_store(fd, &accumulator[fd], buffer);
+	line = create_line(&accumulator[fd]);
 	free(buffer);
-	line = create_line(&accumulator);
 	return (line);
 }
 
-static	void	read_and_store(int fd, t_list **acc, char *buffer)
+static	void	read_and_store(int fd, char **accumulator, char *buffer)
 {
 	int		readed;
-	char	*temp;
 
 	readed = read(fd, buffer, BUFFER_SIZE);
 	if (readed > 0)
 	{
-		if ((*acc) == NULL)
-		{
-			(*acc) = (t_list *)malloc(sizeof(t_list));
-			(*acc)->content = ft_strdup("");
-		}
+		if (*accumulator == NULL)
+			*accumulator = ft_strdup("");
 		buffer[readed] = '\0';
-		temp = (*acc)->content;
-		(*acc)->content = ft_strjoin((*acc)->content, buffer);
-		free(temp);
-		while (readed > 0 && !ft_strchr((*acc)->content, '\n'))
+		update_accumulator(accumulator, ft_strjoin(*accumulator, buffer));
+		while (readed > 0 && ft_strchr(buffer, '\n') == NULL)
 		{
 			readed = read(fd, buffer, BUFFER_SIZE);
 			buffer[readed] = '\0';
-			temp = (*acc)->content;
-			(*acc)->content = ft_strjoin((*acc)->content, buffer);
-			free(temp);
+			update_accumulator(accumulator, ft_strjoin(*accumulator, buffer));
 		}
 	}
 }
 
-static	char	*create_line(t_list **acc)
+static	char	*create_line(char **acc)
 {
-	t_list	*node;
-	char	*line;
-	size_t	len;
-	char	*temp_substring;
+	char		*str;
+	size_t		str_len;
 
-	node = *acc;
-	if (node->content[0] == '\0')
+	if (*acc == NULL)
 		return (NULL);
-	len = find_len(node->content) + 1;
-	line = ft_substr(node->content, 0, len);
-	temp_substring = node->content;
-	node->content = ft_substr(node->content, len, ft_strlen(node->content));
-	free(temp_substring);
-	return (line);
+	str_len = find_nl(*acc, '\n') + 1;
+	str = ft_substr(*acc, 0, str_len);
+	update_accumulator(acc, ft_substr(*acc, str_len, ft_strlen(*acc)));
+	if (*acc[0] == '\0')
+		update_accumulator(acc, NULL);
+	return (str);
 }
 
-// static	void	ft_lstadd_back(t_list **lst, t_list *new)
-// {
-// 	t_list	*node;
+static	void	update_accumulator(char **accumulator, char *new_buffer)
+{
+	char	*temp;
 
-// 	if ((*lst) == NULL)
-// 		(*lst) = new;
-// 	else
-// 	{
-// 		node = *lst;
-// 		while (node->next != NULL)
-// 			node = node->next;
-// 		node->next = new;
-// 	}
-// }
+	temp = *accumulator;
+	*accumulator = new_buffer;
+	free(temp);
+}
