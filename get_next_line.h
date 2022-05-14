@@ -6,7 +6,7 @@
 /*   By: guda-sil@student.42sp.org.br <guda-sil@    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:02:29 by guda-sil@st       #+#    #+#             */
-/*   Updated: 2022/05/09 11:27:24 by guda-sil@st      ###   ########.fr       */
+/*   Updated: 2022/05/13 22:27:52 by guda-sil@st      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define GET_NEXT_LINE_H
 # include <stdlib.h>
 # include <unistd.h>
+# define BUFFER_SIZE 42
 
 /**
  * @brief This functions can read a line from a file descriptor.

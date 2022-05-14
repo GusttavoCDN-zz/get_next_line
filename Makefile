@@ -8,7 +8,7 @@ RM = rm -f
 
 OBJS = ${SRCS:.c=.o}
 
-FLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=1
+FLAGS = -Wall -Wextra -Werror
 
 CC = cc
 

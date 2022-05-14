@@ -27,7 +27,7 @@ void testGnl(char *file_path, char *test_name)
 	// to get FD in macos use file->_file
 	while ((current_line = get_next_line(file->_fileno)) != NULL)
 	{
-		printf("Line %i : '%s'\n", i, current_line);
+		printf("Line %i >>> %s\n", i, current_line);
 		free(current_line);
 		i++;
 	}
